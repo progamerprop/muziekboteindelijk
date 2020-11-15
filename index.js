@@ -9,12 +9,15 @@ const searcher = new YTSearcher({
     revealed: true
 });
 
+
+
 const client = new Discord.Client();
 
 const queue = new Map();
 
 client.on("ready", () => {
-    console.log("I am online!")
+    console.log("De muziek kan afgespeelt worden")
+    client.user.setActivity(`Is ${serverQueue.songs[0].url} aan het afspelen `, { type: "PLAYING" });
 })
 
 client.on("message", (message) => {
@@ -39,8 +42,9 @@ client.on("message", (message) => {
 
     async function execute(message, serverQueue){
         let vc = message.member.voice.channel;
-        if(!vc){
+        if(!vc){  console.log("Commando verkeerd gebruikt")
             return message.channel.send("Please join a voice chat first");
+            
         }else{
             let result = await searcher.search(args.join(" "), { type: "video" })
             const songInfo = await ytdl.getInfo(result.first.url)
@@ -61,16 +65,16 @@ client.on("message", (message) => {
                 };
                 queue.set(message.guild.id, queueConstructor);
 
-                queueConstructor.songs.push(song);
+                queueConstructor.song.push(song);
 
                 try{
                     let connection = await vc.join();
                     queueConstructor.connection = connection;
                     play(message.guild, queueConstructor.songs[0]);
                 }catch (err){
-                    console.error(err);
+                    console.error("404 error");
                     queue.delete(message.guild.id);
-                    return message.channel.send(`Unable to join the voice chat ${err}`)
+                    return message.channel.send(`404 error`)
                 }
             }else{
                 serverQueue.songs.push(song);
@@ -88,7 +92,7 @@ client.on("message", (message) => {
         const dispatcher = serverQueue.connection
             .play(ytdl(song.url))
             .on('finish', () =>{
-                serverQueue.songs.shift();
+                serverQueue.song.shift();
                 play(guild, serverQueue.songs[0]);
             })
             serverQueue.txtChannel.send(`Now playing ${serverQueue.songs[0].url}`)
