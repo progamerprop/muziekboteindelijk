@@ -10,7 +10,7 @@ const searcher = new YTSearcher({
 });
 
 
-
+const serverQueue = queue.get(message.guild.id);
 const client = new Discord.Client();
 
 const queue = new Map();
