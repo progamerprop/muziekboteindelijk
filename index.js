@@ -8,16 +8,15 @@ const searcher = new YTSearcher({
     key: "AIzaSyAT_ZVOGKxun4lFdqtDe6gFg6gGoc3ye0I",
     revealed: true
 });
+
+
+
 const client = new Discord.Client();
+
 const queue = new Map();
-const serverQueue = queue.get(message.guild.id);
-
-
-
 
 client.on("ready", () => {
     console.log("De muziek kan afgespeelt worden")
-    client.user.setActivity(`Is ${serverQueue.songs[0].url} aan het afspelen `, { type: "PLAYING" });
 })
 
 client.on("message", (message) => {
